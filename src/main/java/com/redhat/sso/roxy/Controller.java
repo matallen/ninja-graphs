@@ -1,11 +1,6 @@
 package com.redhat.sso.roxy;
 
 import java.io.IOException;
-import java.text.SimpleDateFormat;
-import java.util.Date;
-import java.util.HashMap;
-import java.util.Map;
-import java.util.Map.Entry;
 
 import javax.servlet.ServletContext;
 import javax.servlet.http.HttpServletRequest;
@@ -22,9 +17,6 @@ import org.apache.commons.io.IOUtils;
 import org.apache.log4j.Logger;
 import org.codehaus.jackson.JsonGenerationException;
 import org.codehaus.jackson.map.JsonMappingException;
-
-import com.redhat.sso.utils.Json;
-import com.redhat.sso.utils.LevelsUtil;
 
 @Path("/")
 public class Controller {
@@ -48,12 +40,12 @@ public class Controller {
       e.printStackTrace();
       return Response.status(500).entity("{\"status\":\"ERROR\",\"message\":\""+e.getMessage()+"\"}").build();  
     }
-    
   }
   
   // manually (via rest) to increment the points for a specific user and pool id
   @GET
   @Path("/proxy/{key}")
+  
   public Response proxyLoad(@Context HttpServletRequest request, @Context HttpServletResponse response, @Context ServletContext servletContext, @PathParam("key") String key){
     try{
       Database db=Database.get();
@@ -63,7 +55,13 @@ public class Controller {
       String decoded=new String(Base64.decodeBase64(base64Encoded));
       System.out.println("decoded="+decoded);
 //      db.save();
-      return Response.status(200).entity(decoded).build();
+      return Response.status(200)
+      		.entity(decoded)
+      		.header("Access-Control-Allow-Origin", "*")
+      		.header("Access-Control-Allow-Headers", "origin, context-type, accept, authorization")
+      		.header("Access-Control-Allow-Methods", "GET, POST, PUT, DELETE, OPTIONS, HEAD")
+      		.header("content-type", "application/json")
+      		.build();
     }catch(Exception e){
     	e.printStackTrace();
       return Response.status(500).entity("{\"status\":\"ERROR\",\"message\":\""+e.getMessage()+"\"}").build();  
