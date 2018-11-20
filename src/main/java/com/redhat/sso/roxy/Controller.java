@@ -50,18 +50,22 @@ public class Controller {
     try{
       Database db=Database.get();
       String base64Encoded=db.getData().get(key);
-      System.out.println("key="+key);
-      System.out.println("encoded="+base64Encoded);
-      String decoded=new String(Base64.decodeBase64(base64Encoded));
-      System.out.println("decoded="+decoded);
-//      db.save();
-      return Response.status(200)
-      		.entity(decoded)
-      		.header("Access-Control-Allow-Origin", "*")
-      		.header("Access-Control-Allow-Headers", "origin, context-type, accept, authorization")
-      		.header("Access-Control-Allow-Methods", "GET, POST, PUT, DELETE, OPTIONS, HEAD")
-      		.header("content-type", "application/json")
-      		.build();
+      log.info("key="+key);
+      log.info("encoded="+base64Encoded);
+      if (null!=base64Encoded){
+      	String decoded=new String(Base64.decodeBase64(base64Encoded));
+      	log.info("decoded and returning="+decoded);
+      	return Response.status(200)
+      			.entity(decoded)
+      			.header("Access-Control-Allow-Origin", "*")
+      			.header("Access-Control-Allow-Headers", "origin, context-type, accept, authorization")
+      			.header("Access-Control-Allow-Methods", "GET, POST, PUT, DELETE, OPTIONS, HEAD")
+      			.header("content-type", "application/json")
+      			.build();
+      }else{
+      	log.error("No data found for provided key");
+      	return Response.status(500).entity("{\"status\":\"ERROR\",\"message\":\"No data found for provided key\"}").build();
+      }
     }catch(Exception e){
     	e.printStackTrace();
       return Response.status(500).entity("{\"status\":\"ERROR\",\"message\":\""+e.getMessage()+"\"}").build();  
