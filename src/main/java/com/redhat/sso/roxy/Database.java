@@ -94,5 +94,10 @@ public class Database{
     instance=Database.load();
     return instance;
   }
+	public static void clear(){
+		Database db=Database.get();
+		db.data=new HashMap<String, String>();
+		db.save();
+	}
   
 }

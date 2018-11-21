@@ -18,6 +18,8 @@ import org.apache.log4j.Logger;
 import org.codehaus.jackson.JsonGenerationException;
 import org.codehaus.jackson.map.JsonMappingException;
 
+import com.redhat.sso.utils.Json;
+
 @Path("/")
 public class Controller {
   private static final Logger log=Logger.getLogger(Controller.class);
@@ -70,6 +72,19 @@ public class Controller {
     	e.printStackTrace();
       return Response.status(500).entity("{\"status\":\"ERROR\",\"message\":\""+e.getMessage()+"\"}").build();  
     }
+  }
+  
+  @GET
+  @Path("/database/get")
+  public Response databaseGet() throws JsonGenerationException, JsonMappingException, IOException{
+  	return Response.status(200).entity(Json.newObjectMapper(true).writeValueAsString(Database.get())).build();
+  }
+  
+  @GET
+  @Path("/database/clear")
+  public Response databaseClear() throws JsonGenerationException, JsonMappingException, IOException{
+  	Database.clear();
+  	return Response.status(200).entity(Json.newObjectMapper(true).writeValueAsString(Database.get())).build();
   }
   
 //  @GET

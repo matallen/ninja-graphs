@@ -9,7 +9,7 @@
  
   <name>${project.groupId}.${project.artifactId}</name>
   <groupId>com.redhat.sso</groupId>
-  <artifactId>ninja-roxy</artifactId> <!--  rest proxy -->
+  <artifactId>ninja-graphs</artifactId> <!--  rest proxy -->
   <version>1.0-SNAPSHOT</version>
   <packaging>war</packaging>
 
