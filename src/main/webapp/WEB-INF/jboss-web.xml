@@ -1,3 +1,3 @@
 <jboss-web>
-    <context-root>ninja-roxy</context-root>
+    <context-root>ninja-graphs</context-root>
 </jboss-web>
