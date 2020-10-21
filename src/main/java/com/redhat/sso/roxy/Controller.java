@@ -11,6 +11,7 @@ import javax.ws.rs.Path;
 import javax.ws.rs.PathParam;
 import javax.ws.rs.core.Context;
 import javax.ws.rs.core.Response;
+import javax.ws.rs.core.Response.ResponseBuilder;
 
 import org.apache.commons.codec.binary.Base64;
 import org.apache.commons.io.IOUtils;
@@ -27,6 +28,15 @@ public class Controller {
   public static void main(String[] asd) throws JsonGenerationException, JsonMappingException, IOException{
   }
   
+  private ResponseBuilder newResponse(int status){
+  	return Response.status(status)
+  			.header("Access-Control-Allow-Origin", "*")
+  			.header("Access-Control-Allow-Headers", "origin, context-type, accept, authorization")
+  			.header("Access-Control-Allow-Methods", "GET, POST, PUT, DELETE, OPTIONS, HEAD")
+  			.header("X-Content-Type-Options", "nosniff")
+  			.header("content-type", "application/json");
+  }
+  
   @POST
   @Path("/proxy/{key}")
   public Response proxySave(@Context HttpServletRequest request, @Context HttpServletResponse response, @Context ServletContext servletContext, @PathParam("key") String key){
@@ -37,10 +47,10 @@ public class Controller {
       Database db=Database.get();
       db.getData().put(key, new String(Base64.encodeBase64(raw.getBytes())));
       db.save();
-      return Response.status(200).entity("{\"status\":\"COMPLETE\"}").build();
+      return newResponse(200).entity("{\"status\":\"COMPLETE\"}").build();
     }catch(IOException e){
       e.printStackTrace();
-      return Response.status(500).entity("{\"status\":\"ERROR\",\"message\":\""+e.getMessage()+"\"}").build();  
+      return newResponse(500).entity("{\"status\":\"ERROR\",\"message\":\""+e.getMessage()+"\"}").build();  
     }
   }
   
@@ -57,34 +67,28 @@ public class Controller {
       if (null!=base64Encoded){
       	String decoded=new String(Base64.decodeBase64(base64Encoded));
       	log.info("decoded and returning="+decoded);
-      	return Response.status(200)
-      			.entity(decoded)
-      			.header("Access-Control-Allow-Origin", "*")
-      			.header("Access-Control-Allow-Headers", "origin, context-type, accept, authorization")
-      			.header("Access-Control-Allow-Methods", "GET, POST, PUT, DELETE, OPTIONS, HEAD")
-      			.header("content-type", "application/json")
-      			.build();
+      	return newResponse(200).entity(decoded).build();
       }else{
       	log.error("No data found for provided key");
-      	return Response.status(500).entity("{\"status\":\"ERROR\",\"message\":\"No data found for provided key\"}").build();
+      	return newResponse(500).entity("{\"status\":\"ERROR\",\"message\":\"No data found for provided key\"}").build();
       }
     }catch(Exception e){
     	e.printStackTrace();
-      return Response.status(500).entity("{\"status\":\"ERROR\",\"message\":\""+e.getMessage()+"\"}").build();  
+      return newResponse(500).entity("{\"status\":\"ERROR\",\"message\":\""+e.getMessage()+"\"}").build();  
     }
   }
   
   @GET
   @Path("/database/get")
   public Response databaseGet() throws JsonGenerationException, JsonMappingException, IOException{
-  	return Response.status(200).entity(Json.newObjectMapper(true).writeValueAsString(Database.get())).build();
+  	return newResponse(200).entity(Json.newObjectMapper(true).writeValueAsString(Database.get())).build();
   }
   
   @GET
   @Path("/database/clear")
   public Response databaseClear() throws JsonGenerationException, JsonMappingException, IOException{
   	Database.clear();
-  	return Response.status(200).entity(Json.newObjectMapper(true).writeValueAsString(Database.get())).build();
+  	return newResponse(200).entity(Json.newObjectMapper(true).writeValueAsString(Database.get())).build();
   }
   
 //  @GET
